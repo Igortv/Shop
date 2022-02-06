@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.shop">
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <application
+        android:name=".App"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Shop">
+        <activity
+            android:name=".presentation.shoplist.ShopListActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".presentation.item.view.ViewItemActivity" />
+        <activity
+            android:name=".presentation.additem.AddItemActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".presentation.item.edit.EditItemActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".presentation.login.LoginActivity"
+            android:windowSoftInputMode="adjustResize" />
+    </application>
+
+</manifest>
