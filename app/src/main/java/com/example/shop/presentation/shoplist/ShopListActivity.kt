@@ -37,7 +37,7 @@ class ShopListActivity : AppCompatActivity(), OnListItemClickListener/*Component
         binding = ActivityShopListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        (applicationContext as App).appComponent.inject(this)
+        (applicationContext as App).appComp().inject(this)
 
         viewModel = ViewModelProvider(this, vmFactory)
             .get(ShopListViewModel::class.java)

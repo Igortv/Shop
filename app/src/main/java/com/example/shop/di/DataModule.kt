@@ -17,18 +17,6 @@ import javax.inject.Singleton
 class DataModule {
     @Provides
     @Singleton
-    fun provideShopRepository(shopApi: ShopApi): ShopRepository {
-        return ShopRepositoryImpl(shopApi)
-    }
-
-    @Provides
-    @Singleton
-    fun provideLoginRepository(sharedPreferences: SharedPreferences): LoginRepository {
-        return LoginRepositoryImpl(sharedPreferences)
-    }
-
-    @Singleton
-    @Provides
     fun provideShopApi(): ShopApi {
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)

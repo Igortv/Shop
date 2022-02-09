@@ -31,7 +31,7 @@ class ViewItemActivity : AppCompatActivity()/*ComponentActivity()*/ {
         binding = ActivityItemViewBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        (applicationContext as App).appComponent.inject(this)
+        (applicationContext as App).appComp().inject(this)
 
         viewModel = ViewModelProvider(this, vmFactory)
             .get(ViewItemViewModel::class.java)

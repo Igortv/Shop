@@ -1,11 +1,11 @@
 package com.example.shop.data.repository
 
-import android.content.Context
 import android.content.SharedPreferences
-import com.example.shop.App
 import com.example.shop.domain.repository.LoginRepository
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class LoginRepositoryImpl @Inject constructor(
     private val sharedPreferences: SharedPreferences
 ) : LoginRepository {

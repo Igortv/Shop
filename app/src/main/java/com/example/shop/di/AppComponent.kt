@@ -9,7 +9,8 @@ import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [AppModule::class, DataModule::class, DomainModule::class])
+@Component(modules = [AppModule::class, DataModule::class, DomainModule::class,
+    ShopRepositoryModule::class, LoginRepositoryModule::class])
 interface AppComponent {
     fun inject(shopListActivity: ShopListActivity)
     fun inject(addItemActivity: AddItemActivity)

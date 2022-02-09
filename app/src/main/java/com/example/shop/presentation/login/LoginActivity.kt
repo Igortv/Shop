@@ -25,7 +25,7 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        (applicationContext as App).appComponent.inject(this)
+        (applicationContext as App).appComp().inject(this)
 
         viewModel = ViewModelProvider(this, vmFactory)
             .get(LoginViewModel::class.java)

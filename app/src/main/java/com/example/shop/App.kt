@@ -16,4 +16,6 @@ class App : Application() {
             .appModule(AppModule(this))
             .build()
     }
+
+    fun appComp() = appComponent
 }

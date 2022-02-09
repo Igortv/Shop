@@ -9,14 +9,15 @@ import com.example.shop.domain.repository.ShopRepository
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ShopRepositoryImpl @Inject constructor(
     private val api: ShopApi
 ) : ShopRepository {
     override suspend fun getList(): Resource<List<Item>> {
         val response = api.getAllItems()
         try {
-            //val response = call.execute()
             if (response.isSuccessful) {
                 val data = response.body()!!.toList().map { it.second.toItem() }
                 return Resource.Success(data)
@@ -35,7 +36,6 @@ class ShopRepositoryImpl @Inject constructor(
         val requestEntity = ItemDto.from(item)
         val response = api.createItem(requestEntity.id, requestEntity)
         try {
-            //val response = call.response
             if (response.isSuccessful) {
                 return Resource.Success(Unit)
             } else {
@@ -51,7 +51,6 @@ class ShopRepositoryImpl @Inject constructor(
     override suspend fun getItemById(itemId: String): Resource<Item> {
         val response = api.getItem(itemId)
         try {
-            //val response = call.execute()
             if (response.isSuccessful) {
                 val data = response.body()!!.toItem()
                 return Resource.Success(data)
@@ -69,7 +68,6 @@ class ShopRepositoryImpl @Inject constructor(
         val requestEntity = ItemDto.from(item)
         val response = api.updateItem(item.id, requestEntity)
         try {
-            //val response = call.execute()
             if (response.isSuccessful) {
                 return Resource.Success(Unit)
             } else {
@@ -85,7 +83,6 @@ class ShopRepositoryImpl @Inject constructor(
     override suspend fun deleteItem(itemId: String): Resource<Unit> {
         val response = api.deleteItem(itemId)
         try {
-            //val response = call.execute()
             if (response.isSuccessful) {
                 return Resource.Success(Unit)
             } else {
