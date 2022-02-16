@@ -14,12 +14,12 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:text="Item name"
         android:textColor="@android:color/black"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/imageViewItemImage"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Item name"/>
 
     <TextView
         android:id="@+id/textViewItemPrice"
@@ -28,10 +28,10 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:text="Item price"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/imageViewItemImage"
-        app:layout_constraintTop_toBottomOf="@+id/textViewItemName" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewItemName"
+        tools:text="Item price"/>
 
     <ImageView
         android:id="@+id/imageViewItemImage"
@@ -60,7 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autoLink="web"
-            android:text="Description" />
+            tools:text="Description" />
     </ScrollView>
 
 <!--    <Button-->

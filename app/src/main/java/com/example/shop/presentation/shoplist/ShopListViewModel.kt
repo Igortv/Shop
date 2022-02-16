@@ -9,10 +9,12 @@ import com.example.shop.domain.repository.LoginRepository
 import com.example.shop.domain.usecase.GetListUseCase
 import com.example.shop.domain.usecase.IsLoggedUseCase
 import com.example.shop.domain.usecase.SetLoggedUseCase
+import com.example.shop.presentation.arch.BaseViewModel
+import com.example.shop.presentation.arch.ViewState
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-sealed class ShopListViewState {
+sealed class ShopListViewState : ViewState() {
     object Loading : ShopListViewState()
     class ItemsLoaded(val items: List<Item>) : ShopListViewState()
     class Error(val message: String) : ShopListViewState()
@@ -22,9 +24,12 @@ class ShopListViewModel(
     private val getListUseCase: GetListUseCase,
     private val isLoggedUseCase: IsLoggedUseCase,
     private val setLoggedUseCase: SetLoggedUseCase
-    ) : ViewModel() {
+    ) : BaseViewModel<ShopListViewState>() {
 
-    private val viewStateLiveData: MutableLiveData<ShopListViewState> = MutableLiveData()
+    override val initialState: ShopListViewState
+        get() = ShopListViewState.Loading
+
+    //private val viewStateLiveData: MutableLiveData<ShopListViewState> = MutableLiveData()
 
     val viewState: LiveData<ShopListViewState>
         get() = viewStateLiveData

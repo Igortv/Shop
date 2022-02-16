@@ -2,18 +2,17 @@ package com.example.shop.presentation.item.view
 
 import android.os.Bundle
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.shop.App
 import com.example.shop.R
 import com.example.shop.viewmodelfactories.ViewItemViewModelFactory
 import com.example.shop.databinding.ActivityItemViewBinding
 import com.example.shop.domain.model.Item
+import com.example.shop.presentation.arch.BaseAppCompatActivity
 import com.squareup.picasso.Picasso
 import javax.inject.Inject
 
-class ViewItemActivity : AppCompatActivity()/*ComponentActivity()*/ {
+class ViewItemActivity : BaseAppCompatActivity<ViewItemViewState, ViewItemViewModel>() {
     companion object {
         const val ITEM_ID_EXTRA = "item_id"
     }
@@ -23,7 +22,11 @@ class ViewItemActivity : AppCompatActivity()/*ComponentActivity()*/ {
     @Inject
     lateinit var vmFactory: ViewItemViewModelFactory
 
-    private lateinit var viewModel: ViewItemViewModel
+    override fun createViewModel(): ViewItemViewModel {
+        val vm = ViewModelProvider(this, vmFactory)
+            .get(ViewItemViewModel::class.java)
+        return vm
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,12 +36,7 @@ class ViewItemActivity : AppCompatActivity()/*ComponentActivity()*/ {
 
         (applicationContext as App).appComp().inject(this)
 
-        viewModel = ViewModelProvider(this, vmFactory)
-            .get(ViewItemViewModel::class.java)
-
-        viewModel.viewState.observe(this, Observer { result ->
-            handleStateChange(result)
-        })
+        initViewStateLiveData()
 
         val itemId = intent.extras?.getString(ITEM_ID_EXTRA)
         if (itemId != null) {
@@ -46,15 +44,17 @@ class ViewItemActivity : AppCompatActivity()/*ComponentActivity()*/ {
         }
     }
 
-    private fun handleStateChange(viewState: ViewItemViewState) {
-        when(viewState) {
-            is ViewItemViewState.Loading -> {
-
+    override fun viewStateHandler(viewState: ViewItemViewState): () -> Unit = when(viewState) {
+        is ViewItemViewState.Loading -> {
+            {}
             }
-            is ViewItemViewState.Error -> {
+        is ViewItemViewState.Error -> {
+            {
                 Toast.makeText(this, viewState.message, Toast.LENGTH_LONG).show()
             }
-            is ViewItemViewState.ItemLoaded -> {
+        }
+        is ViewItemViewState.ItemLoaded -> {
+            {
                 item = viewState.item
 
                 binding.textViewItemName.text = item.name

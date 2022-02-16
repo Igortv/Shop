@@ -2,18 +2,17 @@ package com.example.shop.presentation.item.edit
 
 import android.os.Bundle
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.shop.App
 import com.example.shop.viewmodelfactories.EditItemViewModelFactory
 import com.example.shop.R
 import com.example.shop.databinding.ActivityEditItemBinding
 import com.example.shop.domain.model.Item
+import com.example.shop.presentation.arch.BaseAppCompatActivity
 import com.squareup.picasso.Picasso
 import javax.inject.Inject
 
-class EditItemActivity : AppCompatActivity()/*ComponentActivity()*/ {
+class EditItemActivity : BaseAppCompatActivity<EditItemViewState, EditItemViewModel>()/*ComponentActivity()*/ {
     companion object {
         const val ITEM_ID_EXTRA = "item_id"
     }
@@ -23,7 +22,11 @@ class EditItemActivity : AppCompatActivity()/*ComponentActivity()*/ {
     @Inject
     lateinit var vmFactory: EditItemViewModelFactory
 
-    private lateinit var viewModel: EditItemViewModel
+    override fun createViewModel(): EditItemViewModel {
+        val vm = ViewModelProvider(this, vmFactory)
+            .get(EditItemViewModel::class.java)
+        return vm
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,12 +36,7 @@ class EditItemActivity : AppCompatActivity()/*ComponentActivity()*/ {
 
         (applicationContext as App).appComp().inject(this)
 
-        viewModel = ViewModelProvider(this, vmFactory)
-            .get(EditItemViewModel::class.java)
-
-        viewModel.viewState.observe(this, Observer { result ->
-            handleStateChange(result)
-        })
+        initViewStateLiveData()
 
         binding.buttonSave.setOnClickListener {
             viewModel.updateItem(
@@ -59,12 +57,20 @@ class EditItemActivity : AppCompatActivity()/*ComponentActivity()*/ {
         }
     }
 
-    private fun handleStateChange(viewState: EditItemViewState) {
-        when(viewState) {
-            is EditItemViewState.Error -> {
+    override fun viewStateHandler(viewState: EditItemViewState): () -> Unit = when(viewState) {
+        EditItemViewState.Loading -> {
+            {}
+        }
+        is EditItemViewState.Error -> {
+            {
                 Toast.makeText(this, viewState.message, Toast.LENGTH_LONG).show()
             }
-            is EditItemViewState.ItemLoaded -> {
+        }
+        EditItemViewState.EmptyFields -> {
+            {}
+        }
+        is EditItemViewState.ItemLoaded -> {
+            {
                 item = viewState.item
 
                 binding.editTextEditItemName.setText(viewState.item.name)
@@ -77,11 +83,15 @@ class EditItemActivity : AppCompatActivity()/*ComponentActivity()*/ {
                     //.error(R.drawable.loading_image_error)
                     .into(binding.imageView);
             }
-            is EditItemViewState.ItemUpdated -> {
+        }
+        is EditItemViewState.ItemUpdated -> {
+            {
                 Toast.makeText(this, "Item updated", Toast.LENGTH_LONG).show()
                 finish()
             }
-            is EditItemViewState.ItemDeleted -> {
+        }
+        is EditItemViewState.ItemDeleted -> {
+            {
                 Toast.makeText(this, "Item deleted", Toast.LENGTH_LONG).show()
                 finish()
             }

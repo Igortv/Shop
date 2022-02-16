@@ -1,16 +1,17 @@
 package com.example.shop.presentation.additem
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shop.domain.model.Item
 import com.example.shop.domain.usecase.CreateItemUseCase
+import com.example.shop.presentation.arch.BaseViewModel
+import com.example.shop.presentation.arch.ViewState
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.*
 
-sealed class AddItemViewState {
+sealed class AddItemViewState : ViewState() {
+    object OK : AddItemViewState()
     object Loading : AddItemViewState()
     object ItemAdded : AddItemViewState()
     object EmptyFields : AddItemViewState()
@@ -19,9 +20,9 @@ sealed class AddItemViewState {
 
 class AddItemViewModel(
     private val createItemUseCase: CreateItemUseCase
-) : ViewModel() {
-
-    private val viewStateLiveData: MutableLiveData<AddItemViewState> = MutableLiveData()
+) : BaseViewModel<AddItemViewState>() {
+    override val initialState: AddItemViewState
+        get() = AddItemViewState.Loading
 
     val viewState: LiveData<AddItemViewState>
         get() = viewStateLiveData
@@ -49,25 +50,6 @@ class AddItemViewModel(
                         viewStateLiveData.postValue(AddItemViewState.ItemAdded)
                     }
                     .collect()
-                /*
-            getListUseCase()
-                .onStart {
-                    viewStateLiveData.postValue(ShopListViewState.Loading)
-                }
-                .onEach { result ->
-                    viewStateLiveData.postValue(ShopListViewState.ItemsLoaded(result))
-                }
-                .catch { result ->
-                    viewStateLiveData.postValue(ShopListViewState.Error(result.message!!))
-                }
-                .catch { result ->
-                    viewStateLiveData.postValue(AddItemViewState.Error(result.message!!))
-                }
-                .collect {
-                    viewStateLiveData.postValue(AddItemViewState.ItemAdded)
-                }
-                .launchIn(viewModelScope)
-             */
             }
         }
     }

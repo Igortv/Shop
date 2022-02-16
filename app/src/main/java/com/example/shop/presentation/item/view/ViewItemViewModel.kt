@@ -1,18 +1,17 @@
 package com.example.shop.presentation.item.view
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shop.domain.model.Item
-import com.example.shop.domain.usecase.DeleteItemUseCase
 import com.example.shop.domain.usecase.GetItemByIdUseCase
+import com.example.shop.presentation.arch.BaseViewModel
+import com.example.shop.presentation.arch.ViewState
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
-sealed class ViewItemViewState {
+sealed class ViewItemViewState : ViewState() {
     object Loading : ViewItemViewState()
     class ItemLoaded(val item: Item) : ViewItemViewState()
     class Error(val message: String) : ViewItemViewState()
@@ -20,9 +19,10 @@ sealed class ViewItemViewState {
 
 class ViewItemViewModel(
     private val getItemByIdUseCase: GetItemByIdUseCase
-    ) : ViewModel() {
+    ) : BaseViewModel<ViewItemViewState>() {
 
-    private val viewStateLiveData: MutableLiveData<ViewItemViewState> = MutableLiveData()
+    override val initialState: ViewItemViewState
+        get() = ViewItemViewState.Loading
 
     val viewState: LiveData<ViewItemViewState>
         get() = viewStateLiveData
@@ -39,28 +39,6 @@ class ViewItemViewModel(
                 .collect {
                     viewStateLiveData.postValue(ViewItemViewState.ItemLoaded(it))
                 }
-            /*
-            getListUseCase()
-                .onStart {
-                    viewStateLiveData.postValue(ShopListViewState.Loading)
-                }
-                .onEach { result ->
-                    viewStateLiveData.postValue(ShopListViewState.ItemsLoaded(result))
-                }
-                .catch { result ->
-                    viewStateLiveData.postValue(ShopListViewState.Error(result.message!!))
-                }
-                .onStart {
-                    viewStateLiveData.postValue(ViewItemViewState.Loading)
-                }
-                .catch { result ->
-                    viewStateLiveData.postValue(ViewItemViewState.Error(result.message!!))
-                }
-                .collect {
-                    viewStateLiveData.postValue(ViewItemViewState.ItemLoaded(it))
-                }
-                .launchIn(viewModelScope)
-             */
         }
     }
 }

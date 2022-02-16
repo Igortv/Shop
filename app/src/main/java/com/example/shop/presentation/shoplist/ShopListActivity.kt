@@ -16,20 +16,26 @@ import com.example.shop.R
 import com.example.shop.viewmodelfactories.ShopListViewModelFactory
 import com.example.shop.databinding.ActivityShopListBinding
 import com.example.shop.presentation.additem.AddItemActivity
+import com.example.shop.presentation.arch.BaseAppCompatActivity
 import com.example.shop.presentation.item.edit.EditItemActivity
 import com.example.shop.presentation.item.view.ViewItemActivity
 import com.example.shop.presentation.login.LoginActivity
 import javax.inject.Inject
 
-class ShopListActivity : AppCompatActivity(), OnListItemClickListener/*ComponentActivity()*/ {
+class ShopListActivity : BaseAppCompatActivity<ShopListViewState, ShopListViewModel>(), OnListItemClickListener/*ComponentActivity()*/ {
 
     private lateinit var binding: ActivityShopListBinding
 
     @Inject
     lateinit var vmFactory: ShopListViewModelFactory
 
-    private lateinit var viewModel: ShopListViewModel
     private lateinit var loginButtonMenu: MenuItem
+
+    override fun createViewModel(): ShopListViewModel {
+        val vm = ViewModelProvider(this, vmFactory)
+            .get(ShopListViewModel::class.java)
+        return vm
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,13 +44,7 @@ class ShopListActivity : AppCompatActivity(), OnListItemClickListener/*Component
         setContentView(binding.root)
 
         (applicationContext as App).appComp().inject(this)
-
-        viewModel = ViewModelProvider(this, vmFactory)
-            .get(ShopListViewModel::class.java)
-
-        viewModel.viewState.observe(this, Observer { result ->
-            handleStateChange(result)
-        })
+        initViewStateLiveData()
 
         binding.buttonAddItem.setOnClickListener {
             val intent = Intent(this, AddItemActivity::class.java)
@@ -95,19 +95,21 @@ class ShopListActivity : AppCompatActivity(), OnListItemClickListener/*Component
 
     }
 
-    private fun handleStateChange(viewState: ShopListViewState) {
-        when(viewState) {
-            is ShopListViewState.Loading -> {
-
-            }
-            is ShopListViewState.Error -> {
-                Toast.makeText(this, viewState.message, Toast.LENGTH_LONG).show()
-            }
-            is ShopListViewState.ItemsLoaded -> {
+    override fun viewStateHandler(viewState: ShopListViewState): () -> Unit = when(viewState) {
+        ShopListViewState.Loading -> {
+            {}
+        }
+        is ShopListViewState.ItemsLoaded -> {
+            {
                 val adapter = ItemAdapter(viewState.items, this)
                 binding.itemRecyclerView.adapter = adapter
                 val linearLayoutManager = LinearLayoutManager(this)
                 binding.itemRecyclerView.layoutManager = linearLayoutManager
+            }
+        }
+        is ShopListViewState.Error -> {
+            {
+                Toast.makeText(this, viewState.message, Toast.LENGTH_LONG).show()
             }
         }
     }

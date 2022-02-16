@@ -1,20 +1,13 @@
 package com.example.shop.presentation.login
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.shop.domain.model.Item
-import com.example.shop.domain.usecase.GetItemByIdUseCase
 import com.example.shop.domain.usecase.IsAdminCredentialsUseCase
 import com.example.shop.domain.usecase.SetLoggedUseCase
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.launch
-import kotlin.math.log
+import com.example.shop.presentation.arch.BaseViewModel
+import com.example.shop.presentation.arch.ViewState
 
-sealed class LoginViewState {
+sealed class LoginViewState : ViewState() {
+    object OK : LoginViewState()
     object WrongCredentials : LoginViewState()
     object LoggedAsAdmin : LoginViewState()
     class Error(val message: String) : LoginViewState()
@@ -23,9 +16,10 @@ sealed class LoginViewState {
 class LoginViewModel(
     private val isAdminCredentialsUseCase: IsAdminCredentialsUseCase,
     private val setLoggedUseCase: SetLoggedUseCase
-) : ViewModel() {
+) : BaseViewModel<LoginViewState>() {
 
-    private val viewStateLiveData: MutableLiveData<LoginViewState> = MutableLiveData()
+    override val initialState: LoginViewState
+        get() = LoginViewState.OK
 
     val viewState: LiveData<LoginViewState>
         get() = viewStateLiveData
